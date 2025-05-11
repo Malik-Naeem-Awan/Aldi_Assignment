@@ -17,7 +17,7 @@ const titleRef: Ref<HTMLInputElement | null> = ref(null)
 const error = ref('')
 
 async function saveBook() {
-  const { name, author, publishYear, category, ratings } = form.value
+  const { name, author, publishYear, category } = form.value
   const currentYear = new Date().getFullYear()
   if (publishYear > currentYear) {
     error.value = `Books from the future cannot be added! Allowed year: ${currentYear} or earlier!`

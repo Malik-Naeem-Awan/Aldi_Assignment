@@ -39,12 +39,17 @@ onMounted(async () => {
 
     <!-- Scrollable Content -->
     <main class="flex-1 overflow-y-auto px-4 py-6">
-      <BookListSection
-        v-for="(books, range) in categorizedBooks"
-        :key="range"
-        :range="range.toString()"
-        :books="books"
-      />
+      <template v-if="apibooks.length === 0">
+        <div class="text-center text-gray-500 text-lg mt-10">No books found in the Catalogue!</div>
+      </template>
+      <template v-else>
+        <BookListSection
+          v-for="(books, range) in categorizedBooks"
+          :key="range"
+          :range="range.toString()"
+          :books="books"
+        />
+      </template>
     </main>
 
     <!-- Modal -->
