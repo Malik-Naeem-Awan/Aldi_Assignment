@@ -9,6 +9,7 @@ import { categorizeBooksByDecade } from '@/stores/bookUtils'
 
 const showModal = ref(false)
 const apibooks = ref<Book[]>([])
+const loading = ref(true) // <-- new
 
 const categorizedBooks = computed(() => {
   return categorizeBooksByDecade(apibooks.value)
@@ -19,8 +20,16 @@ function saveBook(book: Book) {
   showModal.value = false
 }
 
+
 onMounted(async () => {
-  apibooks.value = await fetchBooks()
+  loading.value = true
+  try {
+    apibooks.value = await fetchBooks()
+  } catch (error) {
+    console.error('Failed to fetch books:', error)
+  } finally {
+    loading.value = false
+  }
 })
 </script>
 <template>
@@ -39,18 +48,21 @@ onMounted(async () => {
 
     <!-- Scrollable Content -->
     <main class="flex-1 overflow-y-auto px-4 py-6">
-      <template v-if="apibooks.length === 0">
-        <div class="text-center text-gray-500 text-lg mt-10">No books found in the Catalogue!</div>
-      </template>
-      <template v-else>
-        <BookListSection
-          v-for="(books, range) in categorizedBooks"
-          :key="range"
-          :range="range.toString()"
-          :books="books"
-        />
-      </template>
-    </main>
+  <template v-if="loading">
+    <div class="text-center text-gray-400 text-lg mt-10">Loading books...</div>
+  </template>
+  <template v-else-if="apibooks.length === 0">
+    <div class="text-center text-gray-500 text-lg mt-10">No books found in the Catalogue!</div>
+  </template>
+  <template v-else>
+    <BookListSection
+      v-for="(books, range) in categorizedBooks"
+      :key="range"
+      :range="range.toString()"
+      :books="books"
+    />
+  </template>
+</main>
 
     <!-- Modal -->
     <BookModal
