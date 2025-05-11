@@ -9,10 +9,10 @@ import { categorizeBooksByDecade } from '@/stores/bookUtils'
 
 const showModal = ref(false)
 const apibooks = ref<Book[]>([])
-const loading = ref(true) // <-- new
+const loading = ref(true) // Loading state for the book list
 
 const categorizedBooks = computed(() => {
-  return categorizeBooksByDecade(apibooks.value)
+  return categorizeBooksByDecade(apibooks.value)   
 })
 
 function saveBook(book: Book) {
@@ -33,7 +33,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="min-h-screen bg-white font-sans flex flex-col">
-    <!-- Sticky Header -->
+    <!-- Sticky Button -->
     <header class="bg-white z-10 sticky top-0 px-4 py-4 shadow-md">
       <div class="flex justify-center">
         <button
@@ -45,9 +45,9 @@ onMounted(async () => {
       </div>
     </header>
 
-    <!-- Scrollable Content -->
+    <!-- Scrollable Book list -->
     <main class="flex-1 overflow-y-auto px-4 py-6">
-      <template v-if="loading">
+      <template v-if="loading"> <!-- handle when Book list is currently loading-->
         <div class="text-center text-gray-400 text-lg mt-10">Loading books...</div>
       </template>
       <template v-else-if="apibooks.length === 0">
@@ -63,7 +63,7 @@ onMounted(async () => {
       </template>
     </main>
 
-    <!-- Modal -->
+    <!-- add new books functonality-->
     <BookModal
       v-if="showModal"
       :visible="showModal"
