@@ -1,0 +1,58 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+
+import BookModal from '@/components/BookModal.vue'
+import BookListSection from '@/components/BookListSection.vue'
+import type { Book } from '../types'
+import { fetchBooks } from '@/services/fetchBooks'
+import { categorizeBooksByDecade } from '@/utils/bookUtils'
+
+const showModal = ref(false)
+const apibooks = ref<Book[]>([])
+
+const categorizedBooks = computed(() => {
+  return categorizeBooksByDecade(apibooks.value)
+})
+
+function saveBook(book: Book) {
+  apibooks.value.push(book)
+  showModal.value = false
+}
+
+onMounted(async () => {
+  apibooks.value = await fetchBooks()
+})
+</script>
+<template>
+  <div class="min-h-screen bg-white font-sans flex flex-col">
+    <!-- Sticky Header -->
+    <header class="bg-white z-10 sticky top-0 px-4 py-4 shadow-md">
+      <div class="flex justify-center">
+        <button
+          @click="showModal = true"
+          class="bg-[#0e3993] hover:bg-[#5c76b7] text-white font-semibold text-lg px-6 py-2 rounded-lg transition-colors"
+        >
+          Add a Book
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Content -->
+    <main class="flex-1 overflow-y-auto px-4 py-6">
+      <BookListSection
+        v-for="(books, range) in categorizedBooks"
+        :key="range"
+        :range="range"
+        :books="books"
+      />
+    </main>
+
+    <!-- Modal -->
+    <BookModal
+      v-if="showModal"
+      :visible="showModal"
+      @submit="saveBook"
+      @cancel="showModal = false"
+    />
+  </div>
+</template>
