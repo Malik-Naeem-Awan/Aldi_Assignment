@@ -5,7 +5,7 @@ import BookModal from '@/components/BookModal.vue'
 import BookListSection from '@/components/BookListSection.vue'
 import type { Book } from '../types'
 import { fetchBooks } from '@/services/fetchBooks'
-import { categorizeBooksByDecade } from '@/utils/bookUtils'
+import { categorizeBooksByDecade } from '@/stores/bookUtils'
 
 const showModal = ref(false)
 const apibooks = ref<Book[]>([])
@@ -42,7 +42,7 @@ onMounted(async () => {
       <BookListSection
         v-for="(books, range) in categorizedBooks"
         :key="range"
-        :range="range"
+        :range="range.toString()"
         :books="books"
       />
     </main>

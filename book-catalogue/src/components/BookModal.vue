@@ -1,52 +1,39 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Ref } from 'vue'
-import type { Book, ApiBook } from '@/types'
+import type { Book } from '@/types'
 import { createBook } from '@/services/createBook'
 import { useToast } from 'vue-toastification'
-import { sanitizeInput } from '@/utils/bookUtils'
 const emit = defineEmits<{
-  (e: 'submit', book: ApiBook): void
+  (e: 'submit', book: Book): void
   (e: 'cancel'): void
 }>()
 const toast = useToast()
 
 const props = defineProps<{ visible: boolean }>()
 
-const form = ref<Book>({ title: '', author: '', publishedYear: 1999, genre: '', ratings: [] })
+const form = ref<Book>({ name: '', author: '', publishYear: 1999, category: '', ratings: [] })
 const titleRef: Ref<HTMLInputElement | null> = ref(null)
 const error = ref('')
 
 async function saveBook() {
-  const { title, author, publishedYear, genre, ratings } = form.value
+  const { name, author, publishYear, category, ratings } = form.value
   const currentYear = new Date().getFullYear()
-  if (publishedYear > currentYear) {
+  if (publishYear > currentYear) {
     error.value = `Books from the future cannot be added! Allowed year: ${currentYear} or earlier!`
     return
   }
-  if (!title || !author || !publishedYear || !genre) {
+  if (!name || !author || !publishYear || !category) {
     error.value = 'Please fill in all required fields marked with *'
     return
   }
 
-  const sanitizedTitle = sanitizeInput(title, 150)
-  const sanitizedAuthor = sanitizeInput(author, 90)
-  const sanitizedGenre = sanitizeInput(genre, 70)
-
-  const apiBook = {
-    name: sanitizedTitle,
-    author: sanitizedAuthor,
-    category: sanitizedGenre,
-    publishYear: Number(publishedYear),
-    ratings: (ratings ?? []).map((r) => ({ source: r.source.trim(), value: r.value })),
-  }
-
   try {
-    const savedBook = await createBook(apiBook)
+    const savedBook = await createBook(form.value)
     console.log('Book saved:', savedBook)
     toast.success('Book saved successfully!')
     emit('submit', { ...form.value })
-    form.value = { title: '', author: '', publishedYear: 0, genre: '', ratings: [] }
+    form.value = { name: '', author: '', publishYear: 0, category: '', ratings: [] }
     error.value = ''
   } catch (err) {
     error.value = 'Error saving book. Please try again.' + (err as string)
@@ -90,7 +77,7 @@ onMounted(() => {
           </label>
           <input
             ref="titleRef"
-            v-model="form.title"
+            v-model="form.name"
             type="text"
             placeholder="Publication Title"
             class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -114,7 +101,7 @@ onMounted(() => {
             Published Year<span class="text-red-500">*</span>
           </label>
           <input
-            v-model.number="form.publishedYear"
+            v-model.number="form.publishYear"
             type="number"
             placeholder="1999"
             class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -126,7 +113,7 @@ onMounted(() => {
             Genre<span class="text-red-500">*</span>
           </label>
           <input
-            v-model="form.genre"
+            v-model="form.category"
             type="text"
             placeholder="Fantasy"
             class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"

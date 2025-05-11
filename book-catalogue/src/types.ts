@@ -1,12 +1,12 @@
-export interface Book {
-  title: string
-  author: string
-  publishedYear: number
-  genre: string
-  ratings?: { source: string; value: number }[]
-}
+// export interface Book {
+//   title: string
+//   author: string
+//   publishedYear: number
+//   genre: string
+//   ratings?: { source: string; value: number }[]
+// }
 
-export interface ApiBook {
+export interface Book {
   name: string
   author: string
   category: string

@@ -1,8 +1,8 @@
-import type { ApiBook } from '@/types'
+import type { Book } from '@/types'
 
 const API_URL = `/api/books`
 
-export async function createBook(book: ApiBook): Promise<ApiBook> {
+export async function createBook(book: Book): Promise<Book> {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
