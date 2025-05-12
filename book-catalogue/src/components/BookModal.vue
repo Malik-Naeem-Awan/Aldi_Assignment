@@ -4,6 +4,12 @@ import type { Ref } from 'vue'
 import type { Book } from '@/types'
 import { createBook } from '@/services/createBook'
 import { useToast } from 'vue-toastification'
+
+/**
+ * Emits custom events:
+ * - 'submit' with a Book object after a successful save.
+ * - 'cancel' when the form/modal is dismissed without submission.
+ */
 const emit = defineEmits<{
   (e: 'submit', book: Book): void
   (e: 'cancel'): void
@@ -13,6 +19,8 @@ const toast = useToast()
 const props = defineProps<{ visible: boolean }>()
 
 const form = ref<Book>({ name: '', author: '', publishYear: 1999, category: '', ratings: [] })
+
+/** Reference to the title input for autofocus */
 const titleRef: Ref<HTMLInputElement | null> = ref(null)
 const error = ref('')
 
@@ -37,7 +45,7 @@ async function saveBook() {
     error.value = ''
   } catch (err) {
     error.value = 'Error saving book. Please try again.' + (err as string)
-    console.error(err)
+    console.error(error.value)
     toast.error('Error saving book. Please try again.')
   }
 }

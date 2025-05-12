@@ -13,8 +13,10 @@ defineProps<{
       BOOKS PUBLISHED BETWEEN {{ range }}
     </h3>
     <ul v-if="Array.isArray(books)" class="mt-4 space-y-2">
+      <!-- Show sorted books in a single decade -->
       <BookItem v-for="book in books" :key="book.name" :book="book" />
     </ul>
+      <!-- show when no books in a single decade -->
     <p v-else class="mt-4 text-[#38261a]">{{ books }}</p>
   </div>
 </template>
